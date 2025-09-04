@@ -1,7 +1,12 @@
 export interface User {
     id: number;
-    name: string;
-    email: string;
+    tipoEntidad: string;      
+    nombreEntidad: string;
+    correo: string;
+    telefono?: string;
+    ubicacion?: string;
+    direccion?: string;
     password: string;
-    status: number;
+    estado: number;
+    fechaRegistro?: Date;
 }

@@ -1,14 +1,17 @@
-import * as http from 'http';
+import app from "./infraestructure/web/app";
+import { ServerBootstrap } from "./infraestructure/boostrap/server-boostrap";
+import { conectDB } from "./infraestructure/config/data-base";
 
-const hostname = '127.0.0.1';
-const port = 3000;
-
-const server = http.createServer((req, res) => {
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/plain');
-  res.end('¡Hola Mundo desde TypeScript y Node.js!\n');
-});
-
-server.listen(port, hostname, () => {
-  console.log(`Servidor corriendo en http://${hostname}:${port}/`);
-});
+const server = new ServerBootstrap(app);
+//server.init();
+//Autoinvocación para iniciar el servidor
+(async () => {
+  try {
+    await conectDB();
+    const instances = [server.init()];
+    await Promise.all(instances);
+  } catch (error) {
+    console.error("Error during server initialization", error);
+    process.exit(1);
+  }
+})();
