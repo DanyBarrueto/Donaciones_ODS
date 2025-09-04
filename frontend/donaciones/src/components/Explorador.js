@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import '../styles/Explorador.css'
-import '../styles/PaginaPrincipal.css'
 
 // Datos mock (del HTML original)
 const MOCK_LISTINGS = [
@@ -194,7 +193,7 @@ const Explorador = () => {
           <div className="flex items-center gap-3 md:gap-6">
             <div className="hidden md:flex items-center gap-6 nav-links">
               <a href="/#inicio" className="text-gray-700 hover:text-primary-600 font-medium transition-colors">Inicio</a>
-              <a href="/#nosotros" className="text-gray-700 hover:text-primary-600 font-medium transition-colors">Nosotros</a>
+              <a href="/mis-publicaciones" className="text-gray-700 hover:text-primary-600 font-medium transition-colors">Mis Publicaciones</a>
               <a href="/#como-funciona" className="text-gray-700 hover:text-primary-600 font-medium transition-colors">Cómo Funciona</a>
               <a href="/#impacto" className="text-gray-700 hover:text-primary-600 font-medium transition-colors">Impacto</a>
               <a href="/login" className="text-gray-700 hover:text-primary-600 font-medium transition-colors">🔑 Iniciar Sesión</a>
@@ -216,7 +215,7 @@ const Explorador = () => {
         <div id="mobile-menu" className={`mobile-menu md:hidden ${menuOpen ? 'block' : 'hidden'}`}>
           <div className="max-w-7xl mx-auto px-2 pb-4 pt-2 flex flex-col gap-3">
             <a href="/#inicio" className="mobile-link" onClick={() => setMenuOpen(false)}>Inicio</a>
-            <a href="/#nosotros" className="mobile-link" onClick={() => setMenuOpen(false)}>Nosotros</a>
+            <a href="/mis-publicaciones" className="mobile-link" onClick={() => setMenuOpen(false)}>Mis Publicaciones</a>
             <a href="/#como-funciona" className="mobile-link" onClick={() => setMenuOpen(false)}>Cómo Funciona</a>
             <a href="/#impacto" className="mobile-link" onClick={() => setMenuOpen(false)}>Impacto</a>
             <a href="/login" className="mobile-link" onClick={() => setMenuOpen(false)}>🔑 Iniciar Sesión</a>
