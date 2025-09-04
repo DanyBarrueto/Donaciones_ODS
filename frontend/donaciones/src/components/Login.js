@@ -1,9 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import '../styles/Login.css'
 
 const Login = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const containerRef = useRef(null)
+  const navigate = useNavigate()
 
   useEffect(() => {
     // entrance animation similar al script original
@@ -20,10 +23,10 @@ const Login = () => {
       return
     }
 
-    // Mock authentication (igual que el HTML original)
+    // Mock authentication (Aca poner mas adelante la logica real que conecte con el backend)
     if (email === 'demo@foodconnect.com' && password === 'demo123') {
       alert('¡Inicio de sesión exitoso! 🎉')
-      window.location.href = '/'
+      navigate('/explorador')
     } else {
       alert('Credenciales incorrectas. Intenta con:\nEmail: demo@foodconnect.com\nContraseña: demo123')
     }
@@ -32,12 +35,12 @@ const Login = () => {
   return (
     <div className="flex items-center justify-center min-h-screen p-4 relative overflow-hidden">
       {/* Floating Background Elements */}
-      <div className="floating-element top-10 left-10 text-6xl" style={{ animationDelay: '0s' }}>🥕</div>
-      <div className="floating-element top-20 right-20 text-4xl" style={{ animationDelay: '1s' }}>🍞</div>
-      <div className="floating-element bottom-20 left-20 text-5xl" style={{ animationDelay: '2s' }}>🍅</div>
-      <div className="floating-element bottom-32 right-16 text-3xl" style={{ animationDelay: '1.5s' }}>🥬</div>
-      <div className="floating-element top-1/2 left-16 text-4xl" style={{ animationDelay: '3s' }}>🍎</div>
-      <div className="floating-element top-1/3 right-32 text-3xl" style={{ animationDelay: '2.5s' }}>🥐</div>
+  <div className="floating-element top-10 left-10 text-6xl login-emoji-1">🥕</div>
+  <div className="floating-element top-20 right-20 text-4xl login-emoji-2">🍞</div>
+  <div className="floating-element bottom-20 left-20 text-5xl login-emoji-3">🍅</div>
+  <div className="floating-element bottom-32 right-16 text-3xl login-emoji-4">🥬</div>
+  <div className="floating-element top-1/2 left-16 text-4xl login-emoji-5">🍎</div>
+  <div className="floating-element top-1/3 right-32 text-3xl login-emoji-6">🥐</div>
 
       {/* Main Container */}
       <div ref={containerRef} className="auth-container w-full max-w-md p-8 animate-slide-up relative z-10">
@@ -111,14 +114,6 @@ const Login = () => {
           <a href="/" className="btn-secondary">🏠 Volver al inicio</a>
         </div>
 
-        {/* Demo Credentials Info */}
-        <div className="mt-6 p-4 bg-primary-50 rounded-lg border border-primary-200">
-          <h3 className="text-sm font-semibold text-primary-800 mb-2">🔑 Credenciales de Demo:</h3>
-          <div className="text-xs text-primary-700 space-y-1">
-            <p><strong>Email:</strong> demo@foodconnect.com</p>
-            <p><strong>Contraseña:</strong> demo123</p>
-          </div>
-        </div>
       </div>
     </div>
   )

@@ -1,0 +1,17 @@
+/* Estilos para animaciones de los emojis flotantes en la página de Login */
+.login-emoji-1 { animation-delay: 0s; }
+.login-emoji-2 { animation-delay: 1s; }
+.login-emoji-3 { animation-delay: 2s; }
+.login-emoji-4 { animation-delay: 1.5s; }
+.login-emoji-5 { animation-delay: 3s; }
+.login-emoji-6 { animation-delay: 2.5s; }
+
+/* Estilos para los campos de entrada en el formulario de login */
+.input-field{
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
