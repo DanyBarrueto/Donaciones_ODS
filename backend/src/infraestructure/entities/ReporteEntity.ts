@@ -5,7 +5,7 @@ export class ReporteEntity {
   @PrimaryGeneratedColumn()
   id_reporte!: number;
 
-  @Column({ type: "text" })
+  @Column({ type: "character varying" })
   descripcion!: string;
 
   @Column({ type: "int", default: 1 })

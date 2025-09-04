@@ -11,16 +11,16 @@ export class PublicacionEntity {
   @Column({ type: "int" })
   categoria_id!: number;
 
-  @Column({ type: "varchar", length: 255 })
+  @Column({ type: "character varying", length: 255 })
   titulo!: string;
 
-  @Column({ type: "text" })
+  @Column({ type: "character varying" })
   descripcion!: string;
 
-  @Column({ type: "varchar", length: 100 })
+  @Column({ type: "character varying", length: 100 })
   tipo!: string;
 
-  @Column({ type: "varchar", length: 100 })
+  @Column({ type: "character varying", length: 100 })
   cantidad!: string;
 
   @Column({ type: "decimal", precision: 10, scale: 2 })
