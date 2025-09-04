@@ -10,187 +10,197 @@ export class UserController {
     this.app = app;
   }
 
-  async login(req: Request, res: Response): Promise<Response> {
+  async login(request: Request, response: Response): Promise<Response> {
     try {
-      const { email, password } = req.body;
-      if (!email || !password)
-        return res.status(400).json({ error: "Email y contraseña son requeridos" });
+      console.log("Login body:", request.body);
 
-      // Validación de email
-      if (!EMAIL_REGEX.test(email))
-        return res.status(400).json({ error: "Correo electrónico no válido" });
+      // aceptar tanto "email" como "correo"
+      const email = request.body.email ?? request.body.correo;
+      const password = request.body.password;
 
-      // Validación de contraseña
-      if (!PASSWORD_REGEX.test(password))
-        return res.status(400).json({
-          error:
-            "La contraseña debe tener al menos 6 caracteres y máximo 25, incluyendo al menos una letra y un número",
-        });
+      if (!email || !password) {
+        return response
+          .status(400)
+          .json({ error: "Email y contraseña son requeridos" });
+      }
 
       const token = await this.app.login(email, password);
-      return res.status(200).json({ token });
-    } catch (error) {
-      return res.status(401).json({ message: "Invalid Credentials" });
+      return response.status(200).json({ token });
+    } catch (error: any) {
+      console.error("login error:", error);
+      return response.status(401).json({ message: "Invalid Credentials" });
     }
   }
 
-  async registerUser(req: Request, res: Response): Promise<Response> {
-    const { name, email, password } = req.body;
+  async registerUser(request: Request, response: Response): Promise<Response> {
+    // aceptar tanto (name,email) como (nombreEntidad,correo)
+    const rawName = request.body.name ?? request.body.nombreEntidad;
+    const name = typeof rawName === "string" ? rawName.trim() : "";
+    const email = request.body.email ?? request.body.correo;
+    const password = request.body.password;
+
     try {
-      // Validaciones usando expresiones regulares importadas
-      if (!NAME_REGEX.test(name.trim()))
-        return res.status(400).json({ message: "Error en dato" });
-      if (!EMAIL_REGEX.test(email))
-        return res.status(400).json({ error: "Correo electrónico no válido" });
-      if (!PASSWORD_REGEX.test(password))
-        return res.status(400).json({
+      if (!name) return response.status(400).json({ message: "Nombre es requerido" });
+      if (!NAME_REGEX.test(name)) return response.status(400).json({ message: "Error en dato" });
+
+      if (!email || !EMAIL_REGEX.test(email))
+        return response.status(400).json({ error: "Correo electrónico no válido" });
+
+      if (!password || !PASSWORD_REGEX.test(password))
+        return response.status(400).json({
           error:
             "La contraseña debe tener al menos 6 caracteres y máximo 25, incluyendo al menos una letra y un número",
         });
 
       const status = 1;
       const user: Omit<User, "id"> = {
-        tipoEntidad: req.body.tipoEntidad || "Individual",
+        tipoEntidad: request.body.tipoEntidad ?? "Individual",
         nombreEntidad: name,
         correo: email,
+        telefono: request.body.telefono ?? "",
+        ubicacion: request.body.ubicacion ?? "",
+        direccion: request.body.direccion ?? "",
         password,
         estado: status,
+        fechaRegistro: request.body.fechaRegistro ? new Date(request.body.fechaRegistro) : undefined,
       };
+
       const userId = await this.app.createUser(user);
-      return res
+      return response
         .status(201)
         .json({ message: "Usuario registrado correctamente", userId });
-    } catch (error) {
-      return res.status(500).json({ message: "Error en el servidor" });
+    } catch (error: any) {
+      console.error("registerUser error:", error);
+      return response.status(500).json({ message: "Error en el servidor", detail: error.message ?? error });
     }
   }
 
-  async getAllUsers(req: Request, res: Response): Promise<Response> {
+  async getAllUsers(request: Request, response: Response): Promise<Response> {
     try {
       const users = await this.app.getAllUsers();
-      return res.status(200).json(users);
+      return response.status(200).json(users);
     } catch (error) {
-      return res.status(500).json({ message: "Error en el servidor" });
+      return response.status(500).json({ message: "Error en el servidor" });
     }
   }
 
-  async getUserById(req: Request, res: Response): Promise<Response> {
+  async getUserById(request: Request, response: Response): Promise<Response> {
     try {
-      const id = parseInt(req.params.id);
+      const id = parseInt(request.params.id);
       if (isNaN(id)) {
-        return res.status(400).json({ message: "Error en parámetro" });
+        return response.status(400).json({ message: "Error en parámetro" });
       }
       const user = await this.app.getUserById(id);
       if (!user)
-        return res.status(404).json({ message: "Usuario no encontrado" });
-      return res.status(200).json(user);
+        return response.status(404).json({ message: "Usuario no encontrado" });
+      return response.status(200).json(user);
     } catch (error) {
-      return res.status(500).json({ message: "Error en el servidor" });
+      return response.status(500).json({ message: "Error en el servidor" });
     }
   }
 
-  async getUserByIdQuery(req: Request, res: Response): Promise<Response> {
+  async getUserByIdQuery(request: Request, response: Response): Promise<Response> {
     try {
-      const idParam = req.query.id as string;
+      const idParam = request.query.id as string;
       const id = parseInt(idParam);
       if (!idParam || isNaN(id)) {
-        return res.status(400).json({ message: "Query param 'id' inválido" });
+        return response.status(400).json({ message: "Query param 'id' inválido" });
       }
       const user = await this.app.getUserById(id);
       if (!user) {
-        return res.status(404).json({ message: "Usuario no encontrado" });
+        return response.status(404).json({ message: "Usuario no encontrado" });
       }
-      return res.status(200).json(user);
+      return response.status(200).json(user);
     } catch (error) {
-      return res.status(500).json({ message: "Error en el servidor" });
+      return response.status(500).json({ message: "Error en el servidor" });
     }
   }
 
-  async getUserByEmail(req: Request, res: Response): Promise<Response> {
+  async getUserByEmail(request: Request, response: Response): Promise<Response> {
     try {
-      const email: string = req.params.email;
+      const email: string = request.params.email;
       if (!email) {
-        return res.status(400).json({ message: "Error en el parámetro" });
+        return response.status(400).json({ message: "Error en el parámetro" });
       }
       const user = await this.app.getUserByEmail(email);
       if (!user) {
-        return res.status(404).json({ message: "Usuario no encontrado" });
+        return response.status(404).json({ message: "Usuario no encontrado" });
       }
-      return res.status(200).json(user);
+      return response.status(200).json(user);
     } catch (error) {
-      return res.status(500).json({ message: "Error en el servidor" });
+      return response.status(500).json({ message: "Error en el servidor" });
     }
   }
 
-  async getUserByEmailQuery(req: Request, res: Response): Promise<Response> {
+  async getUserByEmailQuery(request: Request, response: Response): Promise<Response> {
     try {
-      const email = req.query.email as string;
+      const email = request.query.email as string;
       if (!email) {
-        return res.status(400).json({ message: "Query param 'email' es requerido" });
+        return response.status(400).json({ message: "Query param 'email' es requerido" });
       }
       const user = await this.app.getUserByEmail(email);
       if (!user) {
-        return res.status(404).json({ message: "Usuario no encontrado" });
+        return response.status(404).json({ message: "Usuario no encontrado" });
       }
-      return res.status(200).json(user);
+      return response.status(200).json(user);
     } catch (error) {
-      return res.status(500).json({ message: "Error en el servidor" });
+      return response.status(500).json({ message: "Error en el servidor" });
     }
   }
 
-  async deleteUser(req: Request, res: Response): Promise<Response> {
+  async deleteUser(request: Request, response: Response): Promise<Response> {
     try {
-      const id = parseInt(req.params.id);
+      const id = parseInt(request.params.id);
       if (isNaN(id)) {
-        return res.status(400).json({ message: "Error en parámetro" });
+        return response.status(400).json({ message: "Error en parámetro" });
       }
       const deleted = await this.app.deleteUserById(id);
       if (!deleted) {
-        return res.status(404).json({ message: "Usuario no encontrado" });
+        return response.status(404).json({ message: "Usuario no encontrado" });
       }
-      return res.status(200).json({ message: "Usuario dado de baja exitosamente" });
+      return response.status(200).json({ message: "Usuario dado de baja exitosamente" });
     } catch (error) {
-      return res.status(500).json({ message: "Error en el servidor" });
+      return response.status(500).json({ message: "Error en el servidor" });
     }
   }
 
-  async deleteUserQuery(req: Request, res: Response): Promise<Response> {
+  async deleteUserQuery(request: Request, response: Response): Promise<Response> {
     try {
-      const idParam = req.query.id as string;
+      const idParam = request.query.id as string;
       const id = parseInt(idParam);
       if (!idParam || isNaN(id)) {
-        return res.status(400).json({ message: "Query param 'id' inválido" });
+        return response.status(400).json({ message: "Query param 'id' inválido" });
       }
       const deleted = await this.app.deleteUserById(id);
       if (!deleted) {
-        return res.status(404).json({ message: "Usuario no encontrado" });
+        return response.status(404).json({ message: "Usuario no encontrado" });
       }
-      return res.status(200).json({ message: "Usuario dado de baja exitosamente" });
+      return response.status(200).json({ message: "Usuario dado de baja exitosamente" });
     } catch (error) {
-      return res.status(500).json({ message: "Error en el servidor" });
+      return response.status(500).json({ message: "Error en el servidor" });
     }
   }
 
-  async updateUser(req: Request, res: Response): Promise<Response> {
+  async updateUser(request: Request, response: Response): Promise<Response> {
     try {
-      const id = parseInt(req.params.id);
+      const id = parseInt(request.params.id);
       if (isNaN(id)) {
-        return res.status(400).json({ message: "Error en parámetro" });
+        return response.status(400).json({ message: "Error en parámetro" });
       }
 
-      let { name, email, password, status } = req.body;
+      let { name, email, password, status } = request.body;
 
       // Validaciones antes de actualizar
       if (name && !/^[a-zA-Z\s]{3,}$/.test(name.trim()))
-        return res.status(400).json({
+        return response.status(400).json({
           message: "El nombre debe tener al menos 3 caracteres y solo contener letras",
         });
 
       if (email && !EMAIL_REGEX.test(email.trim()))
-        return res.status(400).json({ message: "Correo electrónico no válido" });
+        return response.status(400).json({ message: "Correo electrónico no válido" });
 
       if (password && !/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(password.trim()))
-        return res.status(400).json({
+        return response.status(400).json({
           message:
             "La contraseña debe tener al menos 6 caracteres, incluyendo al menos una letra y un número",
         });
@@ -204,13 +214,13 @@ export class UserController {
         estado: status,
       });
       if (!updated) {
-        return res.status(404).json({
+        return response.status(404).json({
           message: "Usuario no encontrado o error al actualizar",
         });
       }
-      return res.status(200).json({ message: "Usuario actualizado con éxito" });
+      return response.status(200).json({ message: "Usuario actualizado con éxito" });
     } catch (error) {
-      return res.status(500).json({ message: "Error en el servidor" });
+      return response.status(500).json({ message: "Error en el servidor" });
     }
   }
 }

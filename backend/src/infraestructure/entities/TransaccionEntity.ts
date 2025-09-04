@@ -8,7 +8,7 @@ export class TransaccionEntity {
   @Column({ type: "numeric" })
   monto!: number;
 
-  @Column({ type: "text" })
+  @Column({ type: "character varying" })
   descripcion!: string;
 
   @Column({ type: "int", default: 1 })

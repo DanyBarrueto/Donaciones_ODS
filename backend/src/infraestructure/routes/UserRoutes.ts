@@ -23,7 +23,7 @@ router.post("/users", async (request, response) => {
     }
 });
 
-router.get("/users", async (request, response) => {
+router.get("/users", authenticateToken, async (request, response) => {
     try {
         await userController.getAllUsers(request, response);
     } catch (error) {

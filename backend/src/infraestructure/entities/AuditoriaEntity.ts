@@ -9,16 +9,16 @@ export class AuditoriaEntity {
 
   usuario!: UserEntity;
 
-  @Column({ type: "varchar", length: 100 })
+  @Column({ type: "character varying", length: 100 })
   tabla_afectada!: string;
 
   @Column({ type: "int" })
   registro_id!: number;
 
-  @Column({ type: "varchar", length: 50 })
+  @Column({ type: "character varying", length: 50 })
   accion!: string;  
 
-  @Column({ type: "text" })
+  @Column({ type: "character varying" })
   descripcion!: string;
 
   @Column({ type: "int", default: 1 })
