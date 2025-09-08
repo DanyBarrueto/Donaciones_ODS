@@ -5,6 +5,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 import Explorador from './components/Explorador';
 import MisPublicaciones from './components/MisPublicaciones';
+import Publicar from './components/Publicar'
 import './App.css';
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/explorador" element={<Explorador />} />
         <Route path="/mis-publicaciones" element={<MisPublicaciones />} />
+        <Route path="/publicar" element={<Publicar />} />
       </Routes>
     </BrowserRouter>
   );

@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import '../styles/PaginaPrincipal.css'
 import '../styles/MisPublicaciones.css'
+import Navbar from './Navbar'
 
 // Datos mock iniciales
 const MOCK_POSTS = [
@@ -214,40 +215,7 @@ const MisPublicaciones = () => {
 				🥐
 			</div>
 
-			{/* Navbar (reutiliza estilos de PaginaPrincipal) */}
-			<nav className="navbar fixed top-0 w-full z-50 px-6 py-4">
-				<div className="max-w-7xl mx-auto flex items-center justify-between">
-					<div className="flex items-center gap-3">
-						<div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-primary-400 to-primary-600 text-white shadow-lg">
-							<svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-								<path d="M12 2L2 7l10 5 10-5-10-5z" />
-								<path d="M2 17l10 5 10-5" />
-								<path d="M2 12l10 5 10-5" />
-							</svg>
-						</div>
-						<div>
-							<h1 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent brand-title">
-								FoodLoop
-							</h1>
-						</div>
-					</div>
-					<div className="flex items-center gap-4">
-						<a href="/" className="text-gray-700 hover:text-primary-600 font-medium transition-colors">
-							🏠 Inicio
-						</a>
-									<button
-										className="btn-logout"
-										onClick={() => {
-											if (window.confirm('¿Estás seguro de que quieres cerrar sesión?')) {
-												navigate('/login')
-											}
-										}}
-									>
-							🚪 Cerrar Sesión
-						</button>
-					</div>
-				</div>
-			</nav>
+			<Navbar />
 
 			{/* Contenido principal */}
 			<div className="pt-24 pb-12 px-4 relative z-10">
