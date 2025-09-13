@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import '../styles/PaginaPrincipal.css'
 import '../styles/MisPublicaciones.css'
 import Navbar from './Navbar'
 

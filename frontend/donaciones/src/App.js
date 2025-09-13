@@ -6,6 +6,9 @@ import Register from './components/Register';
 import Explorador from './components/Explorador';
 import MisPublicaciones from './components/MisPublicaciones';
 import Publicar from './components/Publicar'
+import ConfiguracionUsuario from './components/ConfiguracionUsuario';
+import EditarPublicacion from './components/EditarPublicacion';
+import NoExiste from './components/NoExiste';
 import './App.css';
 
 function App() {
@@ -18,6 +21,10 @@ function App() {
         <Route path="/explorador" element={<Explorador />} />
         <Route path="/mis-publicaciones" element={<MisPublicaciones />} />
         <Route path="/publicar" element={<Publicar />} />
+        <Route path="/configuracion" element={<ConfiguracionUsuario />} />
+        <Route path="/editar-publicacion" element={<EditarPublicacion />} />
+
+        <Route path="*" element={<NoExiste />} />
       </Routes>
     </BrowserRouter>
   );
