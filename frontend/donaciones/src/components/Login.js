@@ -1,10 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import '../styles/Login.css'
+import { login as loginService } from '../api/auth'
 
 const Login = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
   const containerRef = useRef(null)
   const navigate = useNavigate()
 
@@ -16,28 +19,27 @@ const Login = () => {
     return () => clearTimeout(t)
   }, [])
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
+    setError('')
     if (!email || !password) {
-      alert('Por favor, completa todos los campos')
+      setError('Por favor, completa todos los campos')
       return
     }
-
-    // Mock authentication (Aca poner mas adelante la logica real que conecte con el backend)
-    if (email === 'demo@foodloop.com' && password === 'demo123') {
-      alert('¡Inicio de sesión exitoso! 🎉')
+    try {
+      setLoading(true)
+      const data = await loginService({ email, password })
+      const token = data?.token
+      if (!token) throw new Error('No se recibió el token del servidor')
+      localStorage.setItem('auth_token', token)
+      // redirige al explorador por defecto; ajusta según rol si es necesario
       navigate('/explorador')
-    } else {
-      alert('Credenciales incorrectas. Intenta con:\nEmail: demo@foodloop.com\nContraseña: demo123')
+    } catch (err) {
+      const msg = (err?.name === 'TypeError') ? 'No se pudo conectar con el servidor. Verifica que el backend esté encendido y el puerto/URL sean correctos.' : (err.message || 'No se pudo iniciar sesión')
+      setError(msg)
+    } finally {
+      setLoading(false)
     }
-
-    if (email === 'admin@foodloop.com' && password === 'admin') {
-      alert('¡Inicio de sesión exitoso! 🎉')
-      navigate('/administrador-spt')
-    } else {
-      alert('Credenciales incorrectas')
-    }
-
   }
 
   return (
@@ -108,8 +110,14 @@ const Login = () => {
             <a href="#" className="text-primary-600 hover:text-primary-700 font-medium">¿Olvidaste tu contraseña?</a>
           </div>
 
+          {error && (
+            <div className="text-red-600 text-sm">{error}</div>
+          )}
+
           {/* Login Button */}
-          <button type="submit" className="btn-primary w-full">🚀 Iniciar Sesión</button>
+          <button type="submit" className="btn-primary w-full" disabled={loading}>
+            {loading ? 'Iniciando...' : '🚀 Iniciar Sesión'}
+          </button>
         </form>
 
         {/* Register Link */}
