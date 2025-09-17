@@ -9,6 +9,10 @@ import Publicar from './components/Publicar'
 import ConfiguracionUsuario from './components/ConfiguracionUsuario';
 import EditarPublicacion from './components/EditarPublicacion';
 import NoExiste from './components/NoExiste';
+import SolicitarDonacion from './components/SolicitarDonacion';
+import SolicitarCompra from './components/SolicitarCompra';
+import Solicitadas from './components/Solicitadas';
+import Admin from './components/Admin';
 import './App.css';
 
 function App() {
@@ -23,6 +27,11 @@ function App() {
         <Route path="/publicar" element={<Publicar />} />
         <Route path="/configuracion" element={<ConfiguracionUsuario />} />
         <Route path="/editar-publicacion" element={<EditarPublicacion />} />
+        <Route path="/solicitar-donacion" element={<SolicitarDonacion />} />
+        <Route path="/solicitar-compra" element={<SolicitarCompra />} />
+        <Route path="/solicitadas" element={<Solicitadas />} />
+        <Route path="/editar-publicacion" element={<EditarPublicacion />} />
+        <Route path='/administrador-spt' element={<Admin />} />
 
         <Route path="*" element={<NoExiste />} />
       </Routes>

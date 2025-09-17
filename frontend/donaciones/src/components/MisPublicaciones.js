@@ -134,6 +134,7 @@ const categoryEmoji = (category) => {
 const MisPublicaciones = () => {
 	const navigate = useNavigate()
 	const [posts, setPosts] = useState(MOCK_POSTS)
+	const [deleteModal, setDeleteModal] = useState({ open: false, id: null, title: '' })
 	const [filter, setFilter] = useState('all') // all | donation | sale | active | paused | expired
 
 	useEffect(() => {
@@ -171,14 +172,27 @@ const MisPublicaciones = () => {
 	}, [posts, filter])
 
 	const onEdit = (id) => {
-		window.alert(`Editando publicación ${id}. Aquí abriríamos un formulario de edición.`)
+		// Navegar al editor de publicaciones (con id opcional en query)
+		navigate(`/editar-publicacion?id=${id}`)
 	}
 
-	const onDelete = (id) => {
-		if (window.confirm('¿Eliminar esta publicación permanentemente? Esta acción no se puede deshacer.')) {
-			setPosts((prev) => prev.filter((p) => p.id !== id))
-			window.setTimeout(() => window.alert('Publicación eliminada exitosamente'), 0)
-		}
+	const requestDelete = (post) => setDeleteModal({ open: true, id: post.id, title: post.title })
+	const cancelDelete = () => setDeleteModal({ open: false, id: null, title: '' })
+	const confirmDelete = () => {
+		if (deleteModal.id == null) return cancelDelete()
+		setPosts((prev) => prev.filter((p) => p.id !== deleteModal.id))
+		setDeleteModal({ open: false, id: null, title: '' })
+	}
+
+	// Alterna entre 'active' y 'paused' (no cambia si está 'expired')
+	const togglePause = (id) => {
+		setPosts((prev) =>
+			prev.map((p) => {
+				if (p.id !== id) return p
+				if (p.status === 'expired') return p
+				return { ...p, status: p.status === 'paused' ? 'active' : 'paused' }
+			})
+		)
 	}
 
 	const formatDate = (iso) => {
@@ -298,7 +312,7 @@ const MisPublicaciones = () => {
 								const badgeText = isDonation ? '🤝 Donación' : '💰 Venta'
 
 								return (
-									<div className="post-card p-6" key={post.id}>
+									<div className="post-card p-6 relative" key={post.id}>
 										<div className="flex items-start justify-between mb-4">
 											<div className="flex items-center gap-3">
 												<div className="text-3xl">{categoryEmoji(post.category)}</div>
@@ -306,6 +320,9 @@ const MisPublicaciones = () => {
 													<h3 className="text-lg font-bold text-gray-800 leading-tight">{post.title}</h3>
 													<div className="flex items-center gap-2 mt-1">
 														<span className={badgeClass}>{badgeText}</span>
+														{post.status === 'paused' && (
+															<span className="px-2 py-0.5 rounded-full text-xs bg-accent-50 text-accent-600 border border-accent-200">⏸️ Pausada</span>
+														)}
 													</div>
 												</div>
 											</div>
@@ -314,36 +331,48 @@ const MisPublicaciones = () => {
 										<p className="text-gray-700 text-sm leading-relaxed mb-4 line-clamp-3">{post.description}</p>
 
 										<div className="space-y-2 mb-4">
-											<div className="flex items-center gap-2 text-sm text-accent-600 bg-accent-50 px-3 py-1 rounded-full">
-												<span>📍</span>
-												<span className="font-medium">{post.location}</span>
-											</div>
-											{!isDonation && post.expiration ? (
-												<div className="flex items-center gap-2 text-sm text-secondary-600 bg-secondary-50 px-3 py-1 rounded-full">
-													<span>📅</span>
-													<span className="font-medium">Vence: {formatDate(post.expiration)}</span>
-												</div>
-											) : null}
-											{!isDonation && post.price ? (
-												<div className="flex items-center gap-2 text-sm text-primary-600 bg-primary-50 px-3 py-1 rounded-full">
-													<span>💶</span>
-													<span className="font-medium">{post.price}</span>
-												</div>
-											) : null}
-											<div className="flex items-center gap-2 text-sm text-gray-600">
-												<span>⚖️</span>
-												<span>{post.quantity}</span>
+											<div className="flex flex-wrap items-center gap-2 text-sm text-accent-600 bg-accent-50 px-3 py-1 rounded-full">
+												<span>📍 {post.location}</span>
+												<span>•</span>
+												<span>📦 {post.quantity}</span>
+												{post.price && (<><span>•</span><span>💵 {post.price}</span></>)}
+												{post.expiration && (<><span>•</span><span>⏰ {formatDate(post.expiration)}</span></>)}
 											</div>
 										</div>
 
 										<div className="flex flex-wrap gap-2">
-											<button className="btn-secondary" onClick={() => onEdit(post.id)}>
-												✏️ Editar
+											<button className="btn-secondary" onClick={() => onEdit(post.id)}>✏️ Editar</button>
+											<button
+												className="btn-warning"
+												onClick={() => togglePause(post.id)}
+												disabled={post.status === 'expired'}
+											>
+												{post.status === 'paused' ? '▶️ Reanudar' : '⏸️ Pausar'}
 											</button>
-											<button className="btn-danger" onClick={() => onDelete(post.id)}>
-												🗑️ Eliminar
-											</button>
+											<button className="btn-danger" onClick={() => requestDelete(post)}>🗑️ Eliminar</button>
 										</div>
+
+										{/* Modal inline por tarjeta */}
+										{deleteModal.open && deleteModal.id === post.id && (
+											<div className="absolute inset-0 z-20">
+												<div className="absolute inset-0 bg-black/30 rounded-[inherit]" onClick={cancelDelete} />
+												<div className="absolute inset-0 z-30 flex items-center justify-center p-4">
+													<div className="w-full max-w-sm bg-white rounded-xl shadow-2xl p-6">
+														<div className="flex items-start gap-3">
+															<div className="h-10 w-10 flex items-center justify-center rounded-full bg-red-100 text-red-600 text-xl">⚠️</div>
+															<div>
+																<h3 className="text-lg font-semibold text-gray-900">¿Eliminar publicación?</h3>
+																<p className="mt-1 text-sm text-gray-600">Estás a punto de eliminar: <span className="font-medium text-gray-800">{deleteModal.title}</span>. Esta acción no se puede deshacer.</p>
+															</div>
+														</div>
+														<div className="mt-5 flex justify-end gap-3">
+															<button onClick={cancelDelete} className="px-4 py-2 rounded-lg border bg-white text-gray-700 hover:bg-gray-50">Cancelar</button>
+															<button onClick={confirmDelete} className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700">Eliminar</button>
+														</div>
+													</div>
+												</div>
+											</div>
+										)}
 									</div>
 								)
 							})}

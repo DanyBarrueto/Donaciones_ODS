@@ -71,10 +71,10 @@ const Navbar = () => {
               Publicar
             </button>
             <button 
-              onClick={() => handleNavigation('/#impacto')} 
+              onClick={() => handleNavigation('/solicitadas')} 
               className="text-gray-700 hover:text-primary-600 font-medium transition-colors cursor-pointer"
             >
-              Impacto
+              Solicitadas
             </button>
             
             {/* Dropdown menu en desktop */}
@@ -157,10 +157,10 @@ const Navbar = () => {
             Publicar
           </button>
           <button 
-            onClick={() => handleNavigation('/#impacto')} 
+            onClick={() => handleNavigation('/solicitadas')} 
             className="mobile-link text-left"
           >
-            Impacto
+            Solicitadas
           </button>
           
           {/* Sección de usuario en móvil */}

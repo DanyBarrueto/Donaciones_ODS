@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import '../styles/Explorador.css'
 import Navbar from './Navbar'
+import { useNavigate } from 'react-router-dom'
 
 // Datos mock (del HTML original)
 const MOCK_LISTINGS = [
@@ -117,6 +118,8 @@ const Explorador = () => {
   const [modalOpen, setModalOpen] = useState(false)
   const [modalMessage, setModalMessage] = useState('')
 
+  const navigate = useNavigate()
+
   useEffect(() => {
     // Añade retrasos a elementos con animación de entrada
     const els = document.querySelectorAll('.animate-fade-in')
@@ -166,7 +169,7 @@ const Explorador = () => {
 
   return (
     <div className="min-h-screen" style={{ background: 'linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 100%)' }}>
-  <Navbar />
+      <Navbar />
 
       {/* Hero */}
       <section className="hero-gradient py-24 px-6 text-center text-white relative overflow-hidden">
@@ -209,8 +212,11 @@ const Explorador = () => {
         <div className="max-w-7xl mx-auto space-y-12">
           {/* Search */}
           <div className="card p-8 animate-fade-in">
-            <h3 className="text-2xl font-bold text-center mb-8 bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
-              🔍 Busca lo que necesitas
+            <h3 className="text-2xl font-bold text-center mb-8">
+              <span className="align-middle mr-2">🔍</span>
+              <span className="bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent inline-block">
+                Busca lo que necesitas
+              </span>
             </h3>
             <div className="flex flex-col lg:flex-row gap-6">
               <select
@@ -273,6 +279,14 @@ const Explorador = () => {
                 const buttonText = isDonation ? '🤝 Solicitar Donación' : '🛒 Solicitar Compra'
                 const isRequested = requested.has(listing.id)
 
+                const onButtonClick = () => {
+                  if (isDonation) {
+                    navigate('/solicitar-donacion')
+                  } else {
+                    navigate('/solicitar-compra')
+                  }
+                }
+
                 return (
                   <div key={listing.id} className="card p-6 animate-fade-in hover:scale-105 transition-transform duration-300">
                     <div className="flex items-start justify-between mb-4">
@@ -330,11 +344,11 @@ const Explorador = () => {
                     </div>
 
                     <button
-                      className={`btn-request ${isRequested ? 'requested' : ''}`}
-                      onClick={() => handleRequest(listing)}
-                      disabled={isRequested}
+                      className={`btn-request ${isRequested && !isDonation ? 'requested' : ''}`}
+                      onClick={onButtonClick}
+                      disabled={isRequested && !isDonation}
                     >
-                      {isRequested ? (
+                      {isRequested && !isDonation ? (
                         <>
                           <svg className="icon w-4 h-4" viewBox="0 0 24 24">
                             <path d="M20 6L9 17l-5-5" />

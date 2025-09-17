@@ -24,12 +24,20 @@ const Login = () => {
     }
 
     // Mock authentication (Aca poner mas adelante la logica real que conecte con el backend)
-    if (email === 'demo@foodconnect.com' && password === 'demo123') {
+    if (email === 'demo@foodloop.com' && password === 'demo123') {
       alert('¡Inicio de sesión exitoso! 🎉')
       navigate('/explorador')
     } else {
-      alert('Credenciales incorrectas. Intenta con:\nEmail: demo@foodconnect.com\nContraseña: demo123')
+      alert('Credenciales incorrectas. Intenta con:\nEmail: demo@foodloop.com\nContraseña: demo123')
     }
+
+    if (email === 'admin@foodloop.com' && password === 'admin') {
+      alert('¡Inicio de sesión exitoso! 🎉')
+      navigate('/administrador-spt')
+    } else {
+      alert('Credenciales incorrectas')
+    }
+
   }
 
   return (
