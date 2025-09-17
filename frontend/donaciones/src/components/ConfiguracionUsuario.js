@@ -231,12 +231,12 @@ const ConfiguracionUsuario = () => {
               required
             >
               <option value="">Selecciona tu tipo de entidad</option>
-              <option value="restaurant">🍽️ Restaurante</option>
-              <option value="bakery">🥖 Panadería</option>
-              <option value="supermarket">🛒 Supermercado</option>
-              <option value="ngo">🤝 ONG / Comedor Social</option>
-              <option value="individual">👤 Particular</option>
-              <option value="other">🏪 Otro</option>
+              <option value="Restaurante">🍽️ Restaurante</option>
+              <option value="Panadería">🥖 Panadería</option>
+              <option value="Supermercado">🛒 Supermercado</option>
+              <option value="ONG">🤝 ONG / Comedor Social</option>
+              <option value="Particular">👤 Particular</option>
+              <option value="Otro">🏪 Otro</option>
             </select>
           </div>
 

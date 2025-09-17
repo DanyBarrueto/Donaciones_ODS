@@ -9,8 +9,6 @@ body.solicitar-compra-page {
 	min-height: 100vh;
 }
 
-/* Reutiliza keyframes definidos en tailwind.config: fadeIn, slideUp, bounceGentle, pulseRing */
-/* Definiciones locales para asegurar misma animación que HTML original */
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideUp { from { opacity: 0; transform: translateY(20px);} to { opacity: 1; transform: translateY(0);} }
 @keyframes bounceGentle { 0%,20%,50%,80%,100% { transform: translateY(0);} 40% { transform: translateY(-10px);} 60% { transform: translateY(-5px);} }

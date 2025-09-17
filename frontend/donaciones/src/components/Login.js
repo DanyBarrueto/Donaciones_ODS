@@ -30,10 +30,21 @@ const Login = () => {
       setLoading(true)
       const data = await loginService({ email, password })
       const token = data?.token
+      const user = data?.user
+      
       if (!token) throw new Error('No se recibió el token del servidor')
+      
       localStorage.setItem('auth_token', token)
-      // redirige al explorador por defecto; ajusta según rol si es necesario
-      navigate('/explorador')
+      localStorage.setItem('user_data', JSON.stringify(user))
+      
+      // Redirigir según el estado del usuario
+      if (user?.estado === 2) {
+        // Estado 2 = Administrador
+        navigate('/administrador-spt')
+      } else {
+        // Estado 1 = Usuario normal
+        navigate('/explorador')
+      }
     } catch (err) {
       const msg = (err?.name === 'TypeError') ? 'No se pudo conectar con el servidor. Verifica que el backend esté encendido y el puerto/URL sean correctos.' : (err.message || 'No se pudo iniciar sesión')
       setError(msg)

@@ -1,6 +1,6 @@
 // Cliente HTTP simple basado en fetch con base URL configurable
 
-const BASE_URL = process.env.REACT_APP_API_BASE || 'http://localhost:4100'
+const BASE_URL = process.env.REACT_APP_API_BASE || 'http://localhost:4001'
 const API_PREFIX = process.env.REACT_APP_API_PREFIX || '/foodloop'
 
 export function getBaseUrl() {

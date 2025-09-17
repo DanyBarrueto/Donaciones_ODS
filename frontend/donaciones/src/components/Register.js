@@ -1,12 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import '../styles/Register.css'
+import { register as registerService } from '../api/auth'
 
 const Register = () => {
   const containerRef = useRef(null)
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -92,12 +95,31 @@ const Register = () => {
     }
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
+    setError('')
+
+    // Obtener datos del formulario
+    const formData = new FormData(e.target)
+    const data = {
+      entityType: formData.get('entityType'),
+      entityName: formData.get('entityName'),
+      email: formData.get('email'),
+      phone: formData.get('phone'),
+      location: formData.get('location'),
+      address: formData.get('address'),
+      password: password
+    }
+
+    // Validar campos requeridos
+    if (!data.entityType || !data.entityName || !data.email || !data.phone || !data.location || !data.address) {
+      setError('❌ Por favor completa todos los campos')
+      return
+    }
 
     // Validar que las contraseñas coincidan
     if (password !== confirmPassword) {
-      alert('❌ Las contraseñas no coinciden')
+      setError('❌ Las contraseñas no coinciden')
       return
     }
 
@@ -121,11 +143,20 @@ const Register = () => {
     }
 
     if (validationErrors.length > 0) {
-      alert('❌ La contraseña no cumple los requisitos mínimos:\n\n' + validationErrors.join('\n'))
+      setError('❌ La contraseña no cumple los requisitos mínimos:\n\n' + validationErrors.join('\n'))
       return
     }
 
-    navigate('/explorador')
+    try {
+      setLoading(true)
+      const result = await registerService(data)
+      alert('🎉 ¡Registro exitoso! Ya puedes iniciar sesión.')
+      navigate('/login')
+    } catch (err) {
+      setError(err.message || 'No se pudo registrar el usuario')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -163,12 +194,12 @@ const Register = () => {
             <label htmlFor="entityType" className="block text-sm font-semibold text-gray-700">🏢 Tipo de Entidad</label>
             <select id="entityType" name="entityType" className="select-field" required>
               <option value="">Selecciona tu tipo de entidad</option>
-              <option value="restaurant">🍽️ Restaurante</option>
-              <option value="bakery">🥖 Panadería</option>
-              <option value="supermarket">🛒 Supermercado</option>
-              <option value="ngo">🤝 ONG / Comedor Social</option>
-              <option value="individual">👤 Particular</option>
-              <option value="other">🏪 Otro</option>
+              <option value="Restaurante">🍽️ Restaurante</option>
+              <option value="Panadería">🥖 Panadería</option>
+              <option value="Supermercado">🛒 Supermercado</option>
+              <option value="ONG">🤝 ONG / Comedor Social</option>
+              <option value="Particular">👤 Particular</option>
+              <option value="Otro">🏪 Otro</option>
             </select>
           </div>
 
@@ -229,8 +260,14 @@ const Register = () => {
             <label htmlFor="terms" className="text-sm text-gray-600">Acepto los <a href="#" className="text-gradient">términos y condiciones</a> y la <a href="#" className="text-gradient">política de privacidad</a> de FoodConnect 📋</label>
           </div>
 
+          {error && (
+            <div className="text-red-600 text-sm whitespace-pre-line">{error}</div>
+          )}
+
           {/* Register Button */}
-          <button type="submit" className="btn-primary w-full">🎉 Crear mi cuenta</button>
+          <button type="submit" className="btn-primary w-full" disabled={loading}>
+            {loading ? 'Registrando...' : '🎉 Crear mi cuenta'}
+          </button>
         </form>
 
         {/* Login Link */}
